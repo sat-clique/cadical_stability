@@ -56,6 +56,8 @@ inline void Internal::search_assign (int lit, Clause * reason) {
   Var & v = var (idx);
   int lit_level;
 
+  stability[vlit(lit)] = stats.decisions - stability[vlit(lit)];
+
   // The following cases are explained in the two comments above before
   // 'decision_reason' and 'assignment_level'.
   //

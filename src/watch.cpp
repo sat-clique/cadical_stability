@@ -39,9 +39,19 @@ void Internal::connect_watches (bool irredundant_only) {
 
   // Then connect non-binary clauses.
   //
+  for (int lit : trail) {
+    if (val(lit) != 0) {
+      stability[vlit(lit)] = stats.decisions - stability[vlit(lit)];
+    }
+  }
   for (const auto & c : clauses) {
     if (irredundant_only && c->redundant) continue;
     if (c->garbage || c->size == 2) continue;
+    if (stats.conflicts > 0 && !c->reason) {
+      std::stable_sort(c->begin(), c->end(), [this] (int lit0, int lit1) { 
+        return (val(lit0) + 1) * stability[vlit(lit0)] > (val(lit1) + 1) * stability[vlit(lit1)];
+      });
+    }
     watch_clause (c);
     if (!level) {
       const int lit0 = c->literals[0];
@@ -64,6 +74,11 @@ void Internal::connect_watches (bool irredundant_only) {
           LOG ("literal %d resets propagated to %zd", lit1, pos1);
         }
       }
+    }
+  }
+  for (int lit : trail) {
+    if (val(lit) != 0) {
+      stability[vlit(lit)] = stats.decisions - stability[vlit(lit)];
     }
   }
 
