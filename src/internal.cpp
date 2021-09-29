@@ -22,6 +22,7 @@ Internal::Internal ()
   max_var (0),
   level (0),
   vals (0),
+  stability (0), 
   score_inc (1.0),
   scores (this),
   conflict (0),
@@ -121,6 +122,7 @@ void Internal::enlarge (int new_max_var) {
   LOG ("enlarge internal size from %zd to new size %zd", vsize, new_vsize);
   // Ordered in the size of allocated memory (larger block first).
   enlarge_only (wtab, 2*new_vsize);
+  enlarge_zero (stability, 2*new_vsize);
   enlarge_only (vtab, new_vsize);
   enlarge_zero (parents, new_vsize);
   enlarge_only (links, new_vsize);
