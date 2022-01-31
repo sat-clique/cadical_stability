@@ -1,4 +1,5 @@
 #include "internal.hpp"
+#include <numeric>
 
 namespace CaDiCaL {
 
@@ -98,7 +99,12 @@ void Internal::mark_useless_redundant_clauses_as_garbage () {
     stack.push_back (c);
   }
 
-  stable_sort (stack.begin (), stack.end (), reduce_less_useful ());
+  // stable_sort (stack.begin (), stack.end (), reduce_less_useful ());
+  stable_sort (stack.begin (), stack.end (), [this] (Clause* c, Clause* d) {
+    int64_t cstab = std::accumulate(c->begin(), c->end(), (int64_t)0, [this] (int64_t s, int l) { return s + stability[vlit(l)]; }) / c->size;
+    int64_t dstab = std::accumulate(d->begin(), d->end(), (int64_t)0, [this] (int64_t s, int l) { return s + stability[vlit(l)]; }) / d->size;
+    return cstab > dstab;
+  });
 
   size_t target = 1e-2 * opts.reducetarget * stack.size ();
 
