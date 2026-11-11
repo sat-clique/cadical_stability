@@ -16,7 +16,7 @@ gitid="`echo $fullgitid|sed -e 's,^\(.......\).*,\1,'`"
 branch=`git branch|grep '^\*'|head -1|awk '{print $2}'`
 [ "$branch" = "" ] && die "could not get branch from 'git'"
 name=cadical-${version}-${gitid}
-[ "$branch" = "master" ] || name="$name-$branch"
+[ "$branch" = "main" ] || name="$name-$branch"
 dir=/tmp/$name
 tar=/tmp/$name.tar.xz
 rm -rf $dir
